@@ -223,7 +223,9 @@ const part2 = (arr: number[]) => {
   return -1;
 };
 
+console.time("p1");
 p(part1(input.split("\n").map(Number)));
+console.timeEnd("p1");
+console.time("p2");
 p(part2(input.split("\n").map(Number)));
-
-
+console.timeEnd("p2");
