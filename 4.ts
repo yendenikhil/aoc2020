@@ -33,12 +33,15 @@ const part2 = (raw: string) => {
   const byr = (e: string[]) =>
     e[1].search(/^\d{4,4}$/) > -1 && Number(e[1]) >= 1920 &&
     Number(e[1]) <= 2002;
+
   const iyr = (e: string[]) =>
     e[1].search(/^\d{4,4}$/) > -1 && Number(e[1]) >= 2010 &&
     Number(e[1]) <= 2020;
+
   const eyr = (e: string[]) =>
     e[1].search(/^\d{4,4}$/) > -1 && Number(e[1]) >= 2020 &&
     Number(e[1]) <= 2030;
+
   const cm = (e: string) =>
     e.search(/1\d\dcm/) > -1 && Number(e.substr(0, 3)) >= 150 &&
     Number(e.substr(0, 3)) <= 193;
@@ -47,10 +50,14 @@ const part2 = (raw: string) => {
     Number(e.substr(0, 2)) <= 76;
   const hgt = (e: string[]) =>
     e[1].search(/^\d{2,3}(cm|in)$/) > -1 && (cm(e[1]) || inch(e[1]));
+
   const hcl = (e: string[]) => e[1].search(/^#[0-9a-f]{6,6}$/) > -1;
+
   const ecl = (e: string[]) =>
     e[1].search(/^(amb|blu|brn|gry|grn|hzl|oth)$/) > -1;
+
   const pid = (e: string[]) => e[1].search(/^\d{9,9}$/) > -1;
+
   const fieldValid = (e: string[]) => {
     switch (e[0]) {
       case "byr":
@@ -71,6 +78,7 @@ const part2 = (raw: string) => {
         return false;
     }
   };
+
   // iterate all lines
   for (const line of raw.split("\n")) {
     if (line.length > 0) {
