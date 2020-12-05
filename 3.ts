@@ -18,5 +18,8 @@ const part = (raw: string, slopes: number[][]) => {
   return ans;
 };
 
+console.time("p");
 p(part(raw, [[3, 1]]));
+console.timeLog("p");
 p(part(raw, [[3, 1], [1, 1], [5, 1], [7, 1], [1, 2]]));
+console.timeEnd("p");

@@ -1,5 +1,4 @@
-import { read } from "./utils.ts";
-const raw = await read("4.in");
+const raw = await Deno.readTextFile("4.in");
 const p = console.log;
 
 const checkAllPresent = (reqd: string[]) =>
@@ -95,5 +94,8 @@ const part2 = (raw: string) => {
   p({ valid });
 };
 
+console.time("p");
 part1(raw);
+console.timeLog("p");
 part2(raw);
+console.timeEnd("p");

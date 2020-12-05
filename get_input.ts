@@ -6,11 +6,7 @@ headers.set(
 );
 
 const parse = () => {
-  if (Deno.args.length > 1) {
-    return Deno.args.slice(0, 2);
-  } else {
-    return ["2020", Deno.args[0]];
-  }
+  return ["2020", Deno.args[0]];
 };
 
 const [year, day] = parse();
@@ -21,4 +17,8 @@ const raw = await fetch(
   { headers },
 );
 const text = await raw.text();
-console.log(text);
+if (Deno.args[1]) {
+  await Deno.writeTextFile(Deno.args[1], text);
+} else {
+  console.log(text);
+}
