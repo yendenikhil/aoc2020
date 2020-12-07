@@ -1,5 +1,5 @@
 const p = console.log;
-const raw = await Deno.readTextFile("2.in")
+const raw = await Deno.readTextFile("2.in");
 const part1 = (input: string) => {
   return input.split("\n")
     .map((e) => e.replace(":", "").split(" "))
