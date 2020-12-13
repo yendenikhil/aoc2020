@@ -1,74 +1,74 @@
-const raw = await Deno.readTextFile('13.in')
-const p = console.log
+const raw = await Deno.readTextFile("13.in");
+const p = console.log;
 
 const part1 = (raw: string) => {
-    const time = Number(raw.split('\n')[0])
-    const ids = raw.split('\n')[1].split(',').filter(x => x !== 'x').map(Number)
-    let minid = 0
-    let min = time
-    for (const id of ids) {
-        const rem = id - (time % id)
-        if (rem < min) {
-            minid = id
-            min = rem
-        }
+  const time = Number(raw.split("\n")[0]);
+  const ids = raw.split("\n")[1].split(",").filter((x) => x !== "x").map(
+    Number,
+  );
+  let minid = 0;
+  let min = time;
+  for (const id of ids) {
+    const rem = id - (time % id);
+    if (rem < min) {
+      minid = id;
+      min = rem;
     }
-    p(min * minid)
-}
+  }
+  p(min * minid);
+};
 
-const gcd = (a: bigint, b: bigint): bigint => {
-    if (a === 0n) return b
-    if (b === 0n) return a
-    if (a === b) return a
-    if (a > b) return gcd(b, a % b)
-    else return gcd(a, b % a)
-}
+const EE = (x: bigint, y: bigint): [bigint, bigint, bigint] => {
+  let x0 = 1n, x1 = 0n, y0 = 0n, y1 = 1n, q = 0n;
+  while (y > 0) {
+    q = x / y;
+    const t1 = y;
+    y = x % y;
+    x = t1;
 
-const EE = (a: bigint, b: bigint): bigint => {
-    let rOld = a
-    let r = b
-    let sOld = 1n
-    let s = 0n
-    let tOld = 0n
-    let t = 1n
-    while (r !== 0n) {
-        const q = rOld / r
-        const t1 = r 
-        r = rOld - q * r 
-        rOld = t1 
-        const t2 = s 
-        s = sOld - q * s 
-        sOld = t2 
-        const t3 = t 
-        t = tOld - q * t 
-        tOld = t3
-    }
-    return rOld
+    const t2 = x1;
+    x1 = x0 - q * x1;
+    x0 = t2;
 
-}
-const modInverse = (n: bigint, b: bigint) => {
-    const x = EE(n, b)
-    return x % b
+    const t3 = y1;
+    y1 = y0 - q * y1;
+    y0 = t3;
+  }
+  return [q, x0, y0];
+};
+const modInverse = (a: bigint, m: bigint): bigint => {
+  const [g, x, y] = EE(a, m);
+  if (g !== 1n) p(`error ${g}`);
+  return x % m;
+};
+interface Bus {
+  mod: bigint;
+  rem: bigint;
 }
 
 const part2 = (raw: string) => {
-    const ids: [bigint, bigint][] = []
-    raw.split('\n')[1].split(',').forEach((v, i) => {
-        if (v !== 'x') ids.push([BigInt(i) + 1n, BigInt(v)])
-    })
-    p(ids)
-    const N = ids.map(e => e[0]).reduce((a, b) => a * b, 1n)
-    p({ N })
-    let sum = 0n
-    for (const id of ids) {
-        const b = id[1]
-        const n = N / id[0]
-        const x = modInverse(n, b)
-        p({ b, n, x, test: N / n})
-        sum += n * b * x
+  const ids: Bus[] = [];
+  raw.split("\n")[1].split(",").forEach((bus, i) => {
+    if (bus !== "x") {
+      ids.push({
+        mod: BigInt(bus),
+        rem: BigInt(i) % BigInt(bus),
+      });
     }
-    p(sum % N)
-}
+  });
+  p(ids);
+  const N = ids.map((e) => e.mod).reduce((a, b) => a * b, 1n);
+  let res = 0n;
+  for (const bus of ids) {
+    const ai = bus.rem;
+    const ni = bus.mod;
+    const bi = N / ni;
+    p({ bi, ni, modI: modInverse(bi, ni) });
+    res += ai * bi * modInverse(bi, ni);
+  }
+  p(N);
+  p(res % N);
+};
 
-part1(raw)
-part2(raw)
+part1(raw);
+part2(raw);

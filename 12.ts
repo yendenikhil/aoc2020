@@ -19,7 +19,7 @@ const delta = (ang: number) => {
 
 const part1 = (raw: string): void => {
   const comm: [string, number][] = raw.split("\n").map(
-    (e) => [e.substring(0, 1), Number(e.substring(1))]
+    (e) => [e.substring(0, 1), Number(e.substring(1))],
   );
   let x = 0;
   let y = 0;
@@ -77,7 +77,7 @@ const rotateRight = (wx: number, wy: number, deg: number) => {
 
 const part2 = (raw: string): void => {
   const comm: [string, number][] = raw.split("\n").map(
-    (e) => [e.substring(0, 1), Number(e.substring(1))]
+    (e) => [e.substring(0, 1), Number(e.substring(1))],
   );
   let x = 0;
   let y = 0;
