@@ -18,29 +18,29 @@ const part1 = (raw: string) => {
   p(min * minid);
 };
 
-const EE = (x: bigint, y: bigint): [bigint, bigint, bigint] => {
-  let x0 = 1n, x1 = 0n, y0 = 0n, y1 = 1n, q = 0n;
-  while (y > 0) {
-    q = x / y;
-    const t1 = y;
-    y = x % y;
-    x = t1;
-
-    const t2 = x1;
-    x1 = x0 - q * x1;
-    x0 = t2;
-
-    const t3 = y1;
-    y1 = y0 - q * y1;
-    y0 = t3;
+const invmod = (u: bigint, v: bigint): bigint => {
+  let u1 = 1n, u3 = u, v1 = 0n, v3 = v, iter = 1n;
+  while (v3 !== 0n) {
+    const q = u3 / v3;
+    const t3 = u3 % v3;
+    const t1 = u1 + q * v1;
+    u1 = v1;
+    v1 = t1;
+    u3 = v3;
+    v3 = t3;
+    iter = -1n * iter;
   }
-  return [q, x0, y0];
+  if (u3 != 1n) {
+    p(`no inverse exists`);
+    return 0n;
+  }
+  if (iter < 0n) {
+    return v - u1;
+  } else {
+    return u1;
+  }
 };
-const modInverse = (a: bigint, m: bigint): bigint => {
-  const [g, x, y] = EE(a, m);
-  if (g !== 1n) p(`error ${g}`);
-  return x % m;
-};
+
 interface Bus {
   mod: bigint;
   rem: bigint;
@@ -52,23 +52,23 @@ const part2 = (raw: string) => {
     if (bus !== "x") {
       ids.push({
         mod: BigInt(bus),
-        rem: BigInt(i) % BigInt(bus),
+        rem: (BigInt(bus) - BigInt(i)) % BigInt(bus),
       });
     }
   });
-  p(ids);
   const N = ids.map((e) => e.mod).reduce((a, b) => a * b, 1n);
   let res = 0n;
   for (const bus of ids) {
     const ai = bus.rem;
     const ni = bus.mod;
     const bi = N / ni;
-    p({ bi, ni, modI: modInverse(bi, ni) });
-    res += ai * bi * modInverse(bi, ni);
+    res += ai * bi * invmod(bi, ni);
   }
-  p(N);
-  p(res % N);
+  p((res % N).toString());
 };
 
+console.time("p");
 part1(raw);
+console.timeLog("p");
 part2(raw);
+console.timeEnd("p");
