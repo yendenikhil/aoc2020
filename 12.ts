@@ -83,7 +83,6 @@ const part2 = (raw: string): void => {
   let y = 0;
   let wx = 10;
   let wy = 1;
-  let angle = 0;
   for (const instr of comm) {
     switch (instr[0]) {
       case "N":
