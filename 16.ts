@@ -17,6 +17,7 @@ const checkNotValid = (rules: Set<number>[]) =>
 const part1 = (raw: string) => {
   const lines = raw.split("\n");
   const rules = [];
+  // load the rule sets for number ranges
   for (const line of lines) {
     if (line.length === 0) break;
     const [left, right] = line.split(": ");
@@ -28,6 +29,7 @@ const part1 = (raw: string) => {
     genrange(s[0], s[1]).forEach((n) => entry.add(n));
     rules.push(entry);
   }
+  // add up invalid numbers
   const c = checkNotValid(rules);
   let finalans = 0;
   for (let i = rules.length + 5; i < lines.length; i++) {
@@ -41,6 +43,7 @@ const part1 = (raw: string) => {
 const part2 = (raw: string) => {
   const lines = raw.split("\n");
   const rules: Map<string, Set<number>> = new Map();
+  // load the rule sets for number ranges and name
   for (const line of lines) {
     if (line.length === 0) break;
     const [left, right] = line.split(": ");
@@ -52,16 +55,18 @@ const part2 = (raw: string) => {
     genrange(s[0], s[1]).forEach((n) => entry.add(n));
     rules.set(left, entry);
   }
+  // filter in ONLY valid rows
   const ruleRange: Set<number>[] = [];
   rules.forEach((v) => ruleRange.push(v));
   const c = checkNotValid(ruleRange);
-  const mine = lines[ruleRange.length + 2].split(",").map(Number);
   const validrows = [];
   for (let i = ruleRange.length + 5; i < lines.length; i++) {
     const tokens = lines[i].split(",").map(Number);
     const wrong = tokens.filter(c);
     if (wrong.length === 0) validrows.push(tokens);
   }
+  // first pass - see which all fields are valid on valid rows
+  // for each field there might be more than one valid index per row
   const poss: Map<string, number[]> = new Map();
   const cl = validrows[0].length;
   for (const key of rules.keys()) {
@@ -78,6 +83,11 @@ const part2 = (raw: string) => {
     });
     poss.set(key, chance);
   }
+  // now use process of elimination, check which field have
+  // only one valid index, that we know is the field index with certainty
+  // now look for field which have 2 valid index, out of which one
+  // index is already taken in previour pass, so we know the other
+  // index is for field 2 with certainty and so on.
   let con = 1;
   const ans: Map<number, string> = new Map();
   while (con <= cl) {
@@ -92,7 +102,9 @@ const part2 = (raw: string) => {
       }
     });
   }
+  // simple answer calculation
   let mult = 1;
+  const mine = lines[ruleRange.length + 2].split(",").map(Number);
   ans.forEach((v, k) => {
     if (v.includes("departure")) {
       mult *= mine[k];
