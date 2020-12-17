@@ -75,30 +75,45 @@ const part1 = (raw: string) => {
   p(grid.size);
 };
 
+const minmax = (grid: Set<string>) => {
+  const min = [22, 22, 22, 22];
+  const max = [-10, -10, -10, -10];
+  for (const e of grid) {
+    const [x, y, z, w] = e.split(":").map(Number);
+    if (min[0] > x) min[0] = x;
+    if (min[1] > y) min[1] = y;
+    if (min[2] > z) min[2] = z;
+    if (min[3] > w) min[3] = w;
+    if (max[0] < x) max[0] = x;
+    if (max[1] < y) max[1] = y;
+    if (max[2] < z) max[2] = z;
+    if (max[3] < w) max[3] = w;
+  }
+  min.push(...max);
+  return min;
+};
+
 const part2 = (raw: string) => {
   let grid: Set<string> = new Set();
-  let xl = 0;
-  let yl = 0;
-  let zl = 1;
-  let wl = 1;
   raw.split("\n").forEach((row, r) => {
-    xl++;
     row.split("").forEach((cell, c) => {
-      yl++;
       if (cell === "#") {
         grid.add(r + ":" + c + ":" + 0 + ":" + 0);
       }
     });
   });
 
+  // console.time("t");
   for (let cycle = 0; cycle < 6; cycle++) {
-    const start = -1 * cycle - 1;
-    // p({l: grid.size})
+    // let counter = 0;
+    const [x1, y1, z1, w1, x2, y2, z2, w2] = minmax(grid);
+    // p({ x1, x2, y1, y2, z1, z2, w1, w2 });
     const after: Set<string> = new Set();
-    for (let x = start; x <= xl + 1; x++) {
-      for (let y = start; y <= yl + 1; y++) {
-        for (let z = start; z <= zl + 1; z++) {
-          for (let w = start; w <= wl + 1; w++) {
+    for (let x = x1 - 1; x <= x2 + 1; x++) {
+      for (let y = y1 - 1; y <= y2 + 1; y++) {
+        for (let z = z1 - 1; z <= z2 + 1; z++) {
+          for (let w = w1 - 1; w <= w2 + 1; w++) {
+            // counter++;
             const nn = neighbours2(x, y, z, w);
             const curr = grid.has(x + ":" + y + ":" + z + ":" + w);
             const len = nn.filter(([dx, dy, dz, dw]) =>
@@ -113,12 +128,11 @@ const part2 = (raw: string) => {
         }
       }
     }
-    xl += 2;
-    yl += 2;
-    zl += 2;
-    wl += 2;
     grid = after;
+    // console.timeLog("t");
+    // p({ cycle, counter, l: grid.size });
   }
+  // console.timeEnd("t");
   p(grid.size);
 };
 
