@@ -22,11 +22,34 @@ const solve = (line: string): bigint => {
     return calc
 }
 
+const solve2 = (line: string): bigint => {
+    const orig = line
+    while(line.includes('(')) {
+        line = line.replace(/\(([\d+\+\* ]+)\)/, (match, p1) => String(solve2(p1)))
+    }
+    // lets add things 
+    while(line.includes('+')) {
+        line = line.replace(/\d+ \+ \d+/, (match) => {
+            const tokens = match.split(' ')
+            return String(BigInt(tokens[0]) + BigInt(tokens[2]))
+        })
+    }
+    while(line.includes('*')) {
+        line = line.replace(/\d+ \* \d+/, (match) => {
+            const tokens = match.split(' ')
+            return String(BigInt(tokens[0]) * BigInt(tokens[2]))
+        })
+    }
+
+    // p({line, orig})
+    return BigInt(line)
+}
+
 const part1 = (raw: string) => {
     const lines = raw.split('\n')
     let ans = 0n
     for (const line of lines) {
-        ans += solve(line)
+        ans += solve2(line)
     }
     p(String(ans))
 }
@@ -36,5 +59,6 @@ const part1 = (raw: string) => {
 // part1('5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))')
 // part1(`2 * 3 + (4 * 5)\n1 + (2 * 3) + (4 * (5 + 6))`)
 // part1('8 + (7 * 4 * 6 * 4 * 8) * ((4 + 6) * 5 + (9 * 6) + (7 + 9 + 3) * 2) * 5 * (2 * 5 * (2 * 4 * 8 * 5 * 4 * 3) * 9 * 3) + 5')
+// part1('2 * 3 + (4 * 5)')
 
 part1(raw)
