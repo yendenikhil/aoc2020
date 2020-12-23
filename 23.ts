@@ -41,6 +41,7 @@ const play = (head: Node, max: number, rounds: number, resLength: number) => {
     if (!head.n || !head.n.n || !head.n.n.n || !head.n.n.n.n) break;
     const val = head.v;
     const pick = [head.n.v, head.n.n.v, head.n.n.n.v];
+    const pickNode = head.n;
     head.n = head.n.n.n.n;
     let check = val - 1;
     if (check === 0) check = max;
@@ -51,18 +52,13 @@ const play = (head: Node, max: number, rounds: number, resLength: number) => {
     const point = map.get(check);
     if (!point) break;
     const hold = point.n;
-    point.n = new Node(pick[0]);
-    point.n.n = new Node(pick[1]);
-    point.n.n.n = new Node(pick[2]);
-    point.n.n.n.n = hold;
-    map.set(point.n.v, point.n);
-    map.set(point.n.n.v, point.n.n);
-    map.set(point.n.n.n.v, point.n.n.n);
-    // let curr = head
-    // for (let i = 0; i < 9; i++){
-    //     p(curr.v)
-    //     if (curr.n) curr = curr.n
-    // }
+    point.n = pickNode;
+    if (point.n?.n?.n) {
+      point.n.n.n.n = hold;
+      map.set(pick[0], point.n)
+      map.set(pick[1], point.n.n)
+      map.set(pick[2], point.n.n.n)
+    } 
     head = head.n;
   }
   while (head.v !== 1) {
