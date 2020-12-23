@@ -1,51 +1,97 @@
-// const raw = '523764819'
-let raw = "523764819".split("").map(Number);
+const raw = "523764819";
+// const raw = "389125467";
 const p = console.log;
 
-const mod = raw.length;
-const max = 10;
-const numOfRounds = 100;
-let idx = 0;
-const rem = [4, 5, 6, 7, 8];
-const pick = [1, 2, 3];
-
-for (let i = 0; i < numOfRounds; i++) {
-  // p(`==== move ${i + 1} ======`);
-  const curr = raw[idx % mod];
-  const newarr: number[] = [];
-  const test: Set<number> = new Set();
-  rem.forEach((num) => newarr.push(raw[(idx + num) % mod]));
-  rem.forEach((num) => test.add(raw[(idx + num) % mod]));
-  newarr.push(curr);
-  let below = curr + max - 1;
-  while (below > curr) {
-    if (test.has(below % max)) {
-//      p({ below: below % max });
-  //    p({ newarr });
-      const insertIndex = newarr.indexOf(below % max);
-      pick.forEach((num) =>
-        newarr.splice(
-          (insertIndex + num) % mod,
-          0,
-          raw[
-            (idx +
-              num) %
-            mod
-          ],
-        )
-      );
-      break;
-    }
-    below--;
+class Node {
+  v: number;
+  n: Node | null = null;
+  constructor(num: number) {
+    this.v = num;
   }
- // p({ raw, newarr });
-  raw = newarr;
 }
 
-let ans = [];
-idx = raw.indexOf(1) + 1;
-for (let i = 0; i < 8; i++) {
-  ans.push(raw[(idx + i) % mod]);
-}
+const buildcircle = (raw: string, length: number) => {
+  const nums = raw.split("").map(Number);
+  const head = new Node(nums[0]);
+  let curr = head;
+  nums.slice(1).forEach((n) => {
+    curr.n = new Node(n);
+    curr = curr.n;
+  });
+  for (let i = nums.length + 1; i <= length; i++) {
+    curr.n = new Node(i);
+    curr = curr.n;
+  }
+  curr.n = head;
+  return head;
+};
 
-p(ans.join(""));
+const buildMap = (head: Node) => {
+  const map: Map<number, Node> = new Map();
+  while (!map.has(head.v)) {
+    map.set(head.v, head);
+    if (head.n) head = head.n;
+  }
+  return map;
+};
+
+const play = (head: Node, max: number, rounds: number, resLength: number) => {
+  const map = buildMap(head);
+  for (let i = 0; i < rounds; i++) {
+    if (!head.n || !head.n.n || !head.n.n.n || !head.n.n.n.n) break;
+    const val = head.v;
+    const pick = [head.n.v, head.n.n.v, head.n.n.n.v];
+    head.n = head.n.n.n.n;
+    let check = val - 1;
+    if (check === 0) check = max;
+    while (pick.includes(check)) {
+      check--;
+      if (check === 0) check = max;
+    }
+    const point = map.get(check);
+    if (!point) break;
+    const hold = point.n;
+    point.n = new Node(pick[0]);
+    point.n.n = new Node(pick[1]);
+    point.n.n.n = new Node(pick[2]);
+    point.n.n.n.n = hold;
+    map.set(point.n.v, point.n);
+    map.set(point.n.n.v, point.n.n);
+    map.set(point.n.n.n.v, point.n.n.n);
+    // let curr = head
+    // for (let i = 0; i < 9; i++){
+    //     p(curr.v)
+    //     if (curr.n) curr = curr.n
+    // }
+    head = head.n;
+  }
+  while (head.v !== 1) {
+    if (!head.n) break;
+    head = head.n;
+  }
+  const ans = [];
+  for (let i = 0; i < resLength; i++) {
+    if (head.n) {
+      ans.push(head.n.v);
+      head = head.n;
+    }
+  }
+  return ans;
+};
+
+const part1 = (raw: string) => {
+  const buff = buildcircle(raw, 9);
+  const ans = play(buff, 9, 100, 8);
+  p(ans.join(""));
+};
+const part2 = (raw: string) => {
+  const buff = buildcircle(raw, 1000000);
+  const ans = play(buff, 1000000, 10000000, 2);
+  p(ans.reduce((a, b) => a * b, 1));
+};
+
+console.time("p");
+part1(raw);
+console.timeLog("p");
+part2(raw);
+console.timeEnd("p");
