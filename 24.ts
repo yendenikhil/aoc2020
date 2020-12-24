@@ -72,13 +72,13 @@ const part1 = (raw: string) => {
 const part2 = (raw: string, days: number) => {
   let black = getInitialSetup(raw);
   for (let i = 0; i < days; i++) {
-    const queue: string[] = [...black];
+    const queue: Set<string> =new Set(...black)
+    for (const b of black) {
+      neighbours(b).forEach(e => queue.add(e))
+    }
     const newB: Set<string> = new Set();
-    const done: Set<string> = new Set();
-    while (queue.length > 0) {
-      const curr = queue.pop();
+    for (const curr of queue) {
       if (!curr) break;
-      done.add(curr);
       const n = neighbours(curr);
       const len = n.filter((e) => black.has(e)).length;
       // if tile is black
@@ -86,10 +86,6 @@ const part2 = (raw: string, days: number) => {
       // if tile is white
       if (!black.has(curr) && len === 2) newB.add(curr);
       // add neighbours to queue
-      const toadd = n.filter((e) => !done.has(e)).filter((e) =>
-        neighbours(e).filter((ee) => black.has(ee)).length > 0
-      );
-      queue.push(...toadd);
     }
     black = newB;
     // p({ day: i + 1, size: black.size });
