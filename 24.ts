@@ -72,9 +72,9 @@ const part1 = (raw: string) => {
 const part2 = (raw: string, days: number) => {
   let black = getInitialSetup(raw);
   for (let i = 0; i < days; i++) {
-    const queue: Set<string> =new Set(...black)
+    const queue: Set<string> = new Set(...black);
     for (const b of black) {
-      neighbours(b).forEach(e => queue.add(e))
+      neighbours(b).forEach((e) => queue.add(e));
     }
     const newB: Set<string> = new Set();
     for (const curr of queue) {

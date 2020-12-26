@@ -55,10 +55,10 @@ const play = (head: Node, max: number, rounds: number, resLength: number) => {
     point.n = pickNode;
     if (point.n?.n?.n) {
       point.n.n.n.n = hold;
-      map.set(pick[0], point.n)
-      map.set(pick[1], point.n.n)
-      map.set(pick[2], point.n.n.n)
-    } 
+      map.set(pick[0], point.n);
+      map.set(pick[1], point.n.n);
+      map.set(pick[2], point.n.n.n);
+    }
     head = head.n;
   }
   while (head.v !== 1) {
